@@ -1,0 +1,7 @@
+Docs Diodes laser générales : http://labopcfesch.free.fr/telechargement/Documents%20generaux/Diodeslaser.pdf
+
+Diode Laser : https://www.mouser.fr/ProductDetail/ROHM-Semiconductor/RLD65NZN5-00A?qs=Imq1NPwxi773joFyaSkzLA%3D%3D (650nm) (4.5m>
+
+Circuit exemple diode laser : https://www-build--electronic--circuits-com.translate.goog/laser-diode/?_x_tr_sl=en&_x_tr_tl=fr&_x_tr_hl=fr&_x_tr_pto=rq
+ 
+Photo Diode (recepteur) :
