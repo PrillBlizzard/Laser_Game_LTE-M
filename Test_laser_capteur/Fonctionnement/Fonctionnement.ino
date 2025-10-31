@@ -1,28 +1,21 @@
 
-const int laserPin = 2;
-const int capteurPin = 7;
+const int laserPin = 9;
+const int capteurPin = A0;
 int val_capteur;
 
-const int toggle_delay = 100; // en ms
-const int sense_delay = 100; // en ms
+const int toggle_delay = 1;// en ms
+
 
 void setup() {
 
   pinMode(laserPin, OUTPUT);
-  pinMode(capteurPin, INPUT);
-  Serial.begin(9600);               // 57600, 115200, 230400, 460800
+  Serial.begin(2000000);               // 57600, 115200, 230400, 460800, 
 }
 
 void loop() {
   
   switchLaser();
-  get_sensor_value();
   
-  //val_capteur = digitalRead(capteurPin);
-  //delay(225);
-  
-  val_capteur = get_sensor_value();
-  Serial.println(val_capteur);
 }
 
 
@@ -38,8 +31,8 @@ void switchLaser(){
 //fonction retournant la valeur du capteur
 int get_sensor_value(){
 
-  int value = digitalRead(capteurPin);
-  delay(sense_delay);
+  int value = analogRead(capteurPin); // changer en foction de ce que l'on veut vérifier
+  //delay(sense_delay);
   
   return value; 
 }

@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name "eec")(type "KiCad")(uri "C:/Users/tomiche/Downloads/Trans_NXP Semiconductors_NX7002AK,215/eec.pretty")(options "")(descr ""))
+  (lib (name "footprints")(type "KiCad")(uri "C:/Users/tomiche/Downloads/KiCAD/2022-11-10_13-23-45/footprints.pretty")(options "")(descr ""))
+)

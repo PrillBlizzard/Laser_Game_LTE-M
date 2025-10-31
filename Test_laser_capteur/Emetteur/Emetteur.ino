@@ -1,10 +1,10 @@
 
-const uint8_t laserPin = 2;      // S du laser (D2)
-const unsigned int bitTime = 1000; // µs (1 ms = ~1000 bps)
-const unsigned int interFrameMs = 30; // ms entre trames
+const uint8_t laserPin = 9;      // S du laser (D2)
+const unsigned int bitTime = 500; // µs (1 ms = ~1000 bps)
+const unsigned int interFrameMs = 200; // ms entre trames
 const uint8_t PREAMBLE = 0xAA;   // 10101010
 
-const uint8_t buttonPIN = 4;      // S du laser (D2)
+const uint8_t buttonPIN = 2;     
 
 void sendByte(uint8_t trame) {
   // Envoi bit par bit, LSB first
@@ -46,6 +46,10 @@ void ISR_start_Test(){
     delay(interFrameMs);
   
   }
+
+   Serial.println();
+   Serial.println("Test complet fait");
+   Serial.println();
 }
 
 
@@ -60,8 +64,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(buttonPIN), ISR_start_Test, FALLING);
 
   // pour test de code :
-  Serial.begin(230400);
-}
+  Serial.begin(2000000);
+}     
 
 void loop() {
 
