@@ -4,17 +4,18 @@
 
 
   IRsend irmitter;
-  unsigned int frame = 0x00;
+  unsigned int frame = 0xABCD;
 
 void setup() {
   Serial.begin(2000000);
-  irmitter.enableIROut(38);
   Serial.println("Starting Emitting");
 }
 
 void loop() {
 
-  frame += 1;
-  irmitter.sendNEC(frame,8);  
-  delay(1000);
+  irmitter.sendNEC(frame,32);  
+  delay(500);
+    
+  Serial.println(frame, HEX);
+  Serial.println(digitalRead(3));
 }
