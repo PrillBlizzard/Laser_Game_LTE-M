@@ -1,0 +1,3 @@
+Si une batterie de 100 Ah est déchargée avec un courant constant de 5 A, la batterie sera entièrement déchargée au bout de 20 heures.
+
+Fonctionnement chargeur batterie NORDIC du nPM1300 PMIC : https://docs.nordicsemi.com/bundle/ps_npm1300/page/chapters/charger.html

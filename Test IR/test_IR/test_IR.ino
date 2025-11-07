@@ -25,7 +25,9 @@ void loop() {
   if (irrecv.decode(&results)) {
     
     Serial.println(results.decode_type);
-    Serial.println(results.value, HEX);
+    Serial.print(results.value, HEX);
+    Serial.print("  ---  ");
+    Serial.println(results.value, BIN);
     Serial.println("--------------------------");
     irrecv.resume(); // receive the next value
   }
