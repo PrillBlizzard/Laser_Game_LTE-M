@@ -613,6 +613,18 @@
     [
       "f60839c3-d7e9-4ca0-a381-cf8bbd297639",
       "Root"
+    ],
+    [
+      "4d0e1efc-ca90-4564-9e55-7eb5704cf66f",
+      "Epaules"
+    ],
+    [
+      "2dc7cc4f-8398-44f6-9961-4931e28b630b",
+      "Pistolet"
+    ],
+    [
+      "621e181b-40bd-4fc8-ab40-93f9a4b34808",
+      "nrf9151"
     ]
   ],
   "text_variables": {}

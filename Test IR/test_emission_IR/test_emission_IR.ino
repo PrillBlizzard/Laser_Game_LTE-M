@@ -9,6 +9,8 @@
 void setup() {
   Serial.begin(2000000);
   Serial.println("Starting Emitting");
+  pinMode(2,OUTPUT);
+  digitalWrite(2,HIGH);
 }
 
 void loop() {
