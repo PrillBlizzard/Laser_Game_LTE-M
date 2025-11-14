@@ -2011,7 +2011,7 @@
 			)
 		)
 	)
-	(global_label "Dio_Las - CP"
+	(global_label "Diode_Laser- CP"
 		(shape input)
 		(at 74.93 76.2 0)
 		(fields_autoplaced yes)
@@ -2023,7 +2023,7 @@
 		)
 		(uuid "f14ef408-bc7e-473d-b977-ea18ae0a99b4")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 91.1594 76.2 0)
+			(at 94.3042 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
