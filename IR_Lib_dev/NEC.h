@@ -1,5 +1,13 @@
 
+//general definitions for NEC protocol IR communication, both transmitter and receiver.
+//the ISR to listen to the right pin (for reception) is left to the user implementation
+//Same for the PWM activation/deactivation (for transmission) in the sendPulse and sendSpace functions
+
+
+
+
 #include <stdint.h>
+
 
 #define ONE_PULSE  560
 #define ZERO_PULSE 560

@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "devicetree.h": "c",
+        "gpio.h": "c",
+        "kernel.h": "c",
+        "pwm.h": "c",
+        "led.h": "c",
+        "nec.h": "c"
+    },
+    "nrf-connect.debugging.bindings": {
+        "${workspaceFolder}/build/Programme_Capteur": "Launch Programme_Capteur"
+    },
+    "editor.detectIndentation": false
+}

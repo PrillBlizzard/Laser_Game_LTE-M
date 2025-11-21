@@ -57,6 +57,7 @@ int MATCH(uint16_t measured, uint16_t desired){
 
 //Decode the raw data from irparams into a decoded_result_t structure
 //returns 0 on success, 1 for invalid header, 2 for invalid bit
+//carefull when coding the ISR, it usualy uses ticks of X us mucriroseconds instead of microseconds directly
 void decodeNEC(irparams_t* irparams, decoded_result_t* result){
     result->value = 0;
     
