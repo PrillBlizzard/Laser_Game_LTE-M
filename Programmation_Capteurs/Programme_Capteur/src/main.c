@@ -18,6 +18,7 @@
 #define PWM0_OUT_NODE DT_NODELABEL(pwm_out0)
 
 #define IR_REICV_NODE DT_NODELABEL(capteur0)
+#define LASER_EMIT_NODE DT_NODELABEL(laser0)
 
 #define SW2_NODE DT_ALIAS(sw3)
 
@@ -42,6 +43,8 @@ static const struct gpio_dt_spec led3 = GPIO_DT_SPEC_GET(LED3_NODE, gpios);
 
 static const struct gpio_dt_spec pwmOut0 = GPIO_DT_SPEC_GET(PWM0_OUT_NODE, gpios);
 static const struct gpio_dt_spec irecv = GPIO_DT_SPEC_GET(IR_REICV_NODE, gpios);
+
+static const struct gpio_dt_spec lasmitter = GPIO_DT_SPEC_GET(LASER_EMIT_NODE, gpios);
 
 
 static const struct gpio_dt_spec switch2 = GPIO_DT_SPEC_GET(SW2_NODE, gpios);
@@ -90,14 +93,21 @@ static void emitIR_WorkHandler(struct k_work *work)
 {
 
     gpio_pin_toggle_dt(&led2);
+    gpio_pin_set_dt(&lasmitter, 1); //turn on laser
     dataToSend = 0xABCDEF12; 
-    sendNEC(dataToSend); //example data to send
+    
+    while(gpio_pin_get_dt(&switch2) == 1){
+
+
+
+        sendNEC(dataToSend); //example data to send
+        LOG_DBG("TIR");
+
+        k_sleep(K_MSEC(250)); //cooldown
+    }
+
+    gpio_pin_set_dt(&lasmitter, 0); //turn on laser
     gpio_pin_toggle_dt(&led2);
-
-    LOG_DBG("TIR");
-
-
-
 
     //k_work_schedule_for_queue(&emit_work_q,&emitIR_DelayableWork, K_MSEC(500));
 }
@@ -137,6 +147,7 @@ int main(void)
     gpio_pin_configure_dt(&pwmOut0, GPIO_OUTPUT_INACTIVE);
     gpio_pin_configure_dt(&irecv, GPIO_INPUT);
 
+    gpio_pin_configure_dt(&lasmitter, GPIO_OUTPUT_INACTIVE);
     
     gpio_pin_configure_dt(&switch2, GPIO_INPUT);
     
@@ -171,7 +182,7 @@ int main(void)
         }
         else if (res == 2)
         {
-            LOG_DBG("Error Detected : Invalid BIT \n");
+            //LOG_DBG("Error Detected : Invalid BIT \n");
             
 
         }

@@ -28,6 +28,17 @@
         status = "okay";
 
     };
+
+    emetteurLaser {
+        compatible = "gpio-keys";
+
+        laser0: laser_0 {
+            
+            gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+            label = "Laser_1";
+        }; 
+        status = "okay";
+    };
     
 
 
