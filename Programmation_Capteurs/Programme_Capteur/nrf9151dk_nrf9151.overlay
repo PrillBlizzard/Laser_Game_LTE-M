@@ -22,7 +22,7 @@
 
         capteur0: capteur_0 {
             
-            gpios = <&gpio0 2 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+            gpios = <&gpio0 2 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
             label = "Capteur_1";
         }; 
         status = "okay";
@@ -30,16 +30,7 @@
     };
     
 
-    irmitter {
-        compatible = "gpio-leds";
 
-        irmitter0: irmitter_0 {
-            
-            gpios = <&gpio0 7 GPIO_PULL_UP>;
-            label = "IR_Mitter_1";
-        }; 
-        status = "okay";
-    };
 
 
     pwmOutput{
@@ -88,5 +79,4 @@
 
 &pwm_led0 {
     pwms = <&pwm0 0 10000000 PWM_POLARITY_NORMAL>;
-
 };

@@ -7,6 +7,13 @@
 			"name": "Launch Programme_Capteur",
 			"config": "${workspaceFolder}/build/Programme_Capteur",
 			"runToEntryPoint": "main"
+		},
+		{
+			"type": "nrf-connect",
+			"request": "launch",
+			"name": "Launch build",
+			"config": "${workspaceFolder}/build",
+			"runToEntryPoint": "main"
 		}
 	]
 }

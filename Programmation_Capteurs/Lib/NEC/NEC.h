@@ -21,9 +21,12 @@
 // Size of the raw data buffer of irparams_t
 #define BUFFER_SIZE 100
 
+//tick lenght
+#define TICK_LENGHT 375
+
 //minimum gap between transmissions
 #define GAP_USEC 5000
-#define GAP_TICKS (GAP_USEC / 10) //assuming timer ticks are in units of 10us
+#define GAP_TICKS (GAP_USEC / TICK_LENGHT) 
 
 // receiver states
 #define STATE_IDLE     2
@@ -75,4 +78,4 @@ void lR_IR_Receive(irparams_t* irparams, uint8_t irsignal);
 int MATCH(uint16_t measured, uint16_t desired);
 
 //Decode the raw data from irparams into a decoded_result_t structure
-void decodeNEC(irparams_t* irparams, decoded_result_t* result);
+int decodeNEC(irparams_t* irparams, decoded_result_t* result);

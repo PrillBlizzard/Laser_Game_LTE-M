@@ -5,10 +5,12 @@
         "kernel.h": "c",
         "pwm.h": "c",
         "led.h": "c",
-        "nec.h": "c"
+        "nec.h": "c",
+        "log.h": "c"
     },
     "nrf-connect.debugging.bindings": {
-        "${workspaceFolder}/build/Programme_Capteur": "Launch Programme_Capteur"
+        "${workspaceFolder}/build/Programme_Capteur": "Launch Programme_Capteur",
+        "${workspaceFolder}/build": "Launch build"
     },
     "editor.detectIndentation": false
 }
