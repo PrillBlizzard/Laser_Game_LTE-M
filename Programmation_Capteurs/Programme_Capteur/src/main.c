@@ -3,6 +3,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/led.h>
 #include <zephyr/drivers/pwm.h>
+#include <zephyr/drivers/spi.h>
 
 #include <zephyr/logging/log.h>
 
@@ -10,6 +11,7 @@
 
 // ---
 
+//Node Definition From Devicetree
 #define PWM_NODE DT_NODELABEL(pwm_led0) 
 #define LED1_NODE DT_ALIAS(led1)
 #define LED2_NODE DT_ALIAS(led2)
@@ -22,20 +24,31 @@
 
 #define SW2_NODE DT_ALIAS(sw3)
 
-#define REICV_STACK_SIZE 1024
-#define EMIT_STACK_SIZE 1024
+//SPI ports: SCK:13 MISO:12 MOSI:11
+#define STRIP_NODE DT_NODELABEL(led_strip0)
+
 // ---
 
+//local const
+#define REICV_STACK_SIZE 1024
+#define EMIT_STACK_SIZE 1024
+
+// ---
+
+//initialize logger
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 // ---
 
+    //initialize workqueues
     struct k_work_q reicv_work_q;
     struct k_work_q emit_work_q;
     K_THREAD_STACK_DEFINE(reicv_stack_area, REICV_STACK_SIZE);
     K_THREAD_STACK_DEFINE(emit_stack_area, EMIT_STACK_SIZE);
 
 //---
+
+//GPIO configurations from devicetree NODE
 static const struct pwm_dt_spec irmitterPWM_dt = PWM_DT_SPEC_GET(PWM_NODE); 
 static const struct gpio_dt_spec led1 = GPIO_DT_SPEC_GET(LED1_NODE, gpios);
 static const struct gpio_dt_spec led2 = GPIO_DT_SPEC_GET(LED2_NODE, gpios);
@@ -46,13 +59,13 @@ static const struct gpio_dt_spec irecv = GPIO_DT_SPEC_GET(IR_REICV_NODE, gpios);
 
 static const struct gpio_dt_spec lasmitter = GPIO_DT_SPEC_GET(LASER_EMIT_NODE, gpios);
 
-
 static const struct gpio_dt_spec switch2 = GPIO_DT_SPEC_GET(SW2_NODE, gpios);
 
-//static const struct gpio_dt_spec pwmOutput0 = GPIO_DT_SPEC_GET(PWM0_OUT_NODE, gpios);
+
 
 // ---
 
+//initialisation des works
 struct k_work lR_IR_Work;
 struct k_work emitIR_Work;
 
@@ -61,12 +74,16 @@ struct k_work_delayable emitIR_DelayableWork;
 
 // ---
 
+//Paramètres recepteur (1)
 irparams_t irParams = { .recvState = STATE_IDLE, .timer = 0, .rawlen = 0 };
 decoded_result_t decodedResult = { .value = 0, .bits = 0 };
 
+//init data to send
 unsigned long dataToSend = 0x00000000;
 
+//init callback de l'interruption de la gachette
 static struct gpio_callback switch2_cb_data;
+
 
 // ---
 
@@ -93,26 +110,46 @@ static void emitIR_WorkHandler(struct k_work *work)
 {
 
     gpio_pin_toggle_dt(&led2);
-    gpio_pin_set_dt(&lasmitter, 1); //turn on laser
     dataToSend = 0xABCDEF12; 
     
     while(gpio_pin_get_dt(&switch2) == 1){
 
 
-
+        gpio_pin_set_dt(&lasmitter, 1); //turn on laser
         sendNEC(dataToSend); //example data to send
-        LOG_DBG("TIR");
+        //LOG_DBG("TIR");
+        gpio_pin_set_dt(&lasmitter, 0); //turn on laser
 
-        k_sleep(K_MSEC(250)); //cooldown
+        k_sleep(K_MSEC(100)); //cooldown
     }
 
-    gpio_pin_set_dt(&lasmitter, 0); //turn on laser
     gpio_pin_toggle_dt(&led2);
 
     //k_work_schedule_for_queue(&emit_work_q,&emitIR_DelayableWork, K_MSEC(500));
 }
 
 // --- 
+
+void test_RGB_Strip_LEDs(const struct device *dev, struct spi_cs_control *cs){
+    struct spi_config config;
+
+    config.frequency = 800000;
+    config.operation = SPI_OP_MODE_MASTER | SPI_WORD_SET(24) | SPI_TRANSFER_MSB;
+    config.slave = 0;
+    config.cs = *cs;
+
+    uint32_t buff[3] = { 0xFF0000, 0x00FF00, 0x0000FF };
+    int len = 3*sizeof(buff[0]);
+
+    struct spi_buf tx_buf = { .buf = buff, .len = len };
+    struct spi_buf_set tx_bufs = { .buffers = &tx_buf, .count = 1 };
+    int ret = spi_write(dev, &config, &tx_bufs);
+    if (ret != 0) {
+        LOG_ERR("SPI write failed: %d", ret);
+    }
+}
+
+// ---
 
 //turns on the PWM for "duration" microseconds
 void sendPulse(int duration){
@@ -160,15 +197,22 @@ int main(void)
     k_work_schedule_for_queue(&reicv_work_q,&lR_IR_DelayableWork, K_USEC(10));
 
     k_work_init_delayable(&emitIR_DelayableWork, emitIR_WorkHandler);
-    //k_work_schedule_for_queue(&emit_work_q,&emitIR_DelayableWork, K_MSEC(2000));
-
-    // pwm_set_dt(&irmitterPWM_dt, PWM_KHZ(38), PWM_HZ(9500)); //set duty cycle to 25% 38kHz/4 = 9500Hz
 
     gpio_pin_interrupt_configure_dt(&switch2, GPIO_INT_EDGE_TO_ACTIVE);
     gpio_init_callback(&switch2_cb_data, trigger_pulled, BIT(switch2.pin));
     gpio_add_callback(switch2.port, &switch2_cb_data);
 
+    //RGB_LEDs
+    const struct device *const dev = DEVICE_DT_GET(STRIP_NODE);
+    struct spi_cs_control cs_ctrl = (struct spi_cs_control){.gpio = GPIO_DT_SPEC_GET(STRIP_NODE, cs_gpios), .delay = 0u,};
+
+
     while(1){
+
+        
+        test_RGB_Strip_LEDs(dev, &cs_ctrl);
+
+
         val = gpio_pin_get_dt(&irecv);
         gpio_pin_set_dt(&led1, val); 
 
@@ -187,7 +231,7 @@ int main(void)
 
         }
 
-        k_sleep(K_MSEC(500));
+        k_sleep(K_MSEC(200));
         
     } 
     
