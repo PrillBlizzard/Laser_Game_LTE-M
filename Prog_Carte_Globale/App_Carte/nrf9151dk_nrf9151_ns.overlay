@@ -1,0 +1,65 @@
+// To get started, press Ctrl+Space to bring up the completion menu and view the available nodes.
+
+// You can also use the buttons in the sidebar to perform actions on nodes.
+// Actions currently available include:
+
+// * Enabling / disabling the node
+// * Adding the bus to a bus
+// * Removing the node
+// * Connecting ADC channels
+
+// For more help, browse the DeviceTree documentation at https://docs.zephyrproject.org/latest/guides/dts/index.html
+// You can also visit the nRF DeviceTree extension documentation at https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/ncs_configure_app.html#devicetree-support-in-the-extension
+
+/{
+    capteurs {
+        compatible = "gpio-keys";
+
+        capteur_ir: capteur_ir {
+            
+            gpios = <&gpio0 2 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+            label = "Capteur_IR";
+        }; 
+        status = "okay";
+
+    };
+
+    PWM_output_GPIO{
+        compatible = "gpio-leds";
+
+        pwm_out0: pwm_output_0 {
+
+        gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+        label = "PWM_Output_1";
+
+        };
+        status = "okay";
+        
+    };
+
+    emetteurs_IR {
+        compatible = "pwm-leds";
+        
+        emetteur_ir: emetteur_ir{
+            
+            pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+            status = "okay";
+        };
+
+        status = "okay";
+    };
+
+    emetteurs_LASER {
+        compatible =  "gpio-leds";
+
+        laser0: laser_0 {
+
+            gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+            label = "Emetteur LASER 0";
+            status = "okay";
+        };
+
+        status = "okay";
+    };
+
+};

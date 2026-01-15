@@ -87,7 +87,7 @@ static struct gpio_callback switch2_cb_data;
 
 // ---
 
-// ISR that detect when the trigger (button is pressed)
+// ISR that detect when the trigger (button) is pressed
 void trigger_pulled(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
     LOG_DBG("Switch 2 Pressed");
