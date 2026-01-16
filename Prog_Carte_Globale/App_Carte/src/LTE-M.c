@@ -228,7 +228,7 @@ int send_hit_info(unsigned long decoded_data)
     if (sock4 >= 0 && IS_ENABLED(CONFIG_NET_IPV4))
     {
         struct http_request req;
-
+        const char *decoded_data_str = (const char *)decoded_data;
         
         memset(&req, 0, sizeof(req));
 
@@ -236,7 +236,7 @@ int send_hit_info(unsigned long decoded_data)
         req.url = "/posty";
         req.host = SERVER_ADDR4;
         req.protocol = "HTTP/1.1";
-        req.payload = decoded_data;
+        req.payload = "Bonjour";
         req.payload_len = strlen(req.payload);
         req.response = response_cb;
         req.recv_buf = recv_buf_ipv4;

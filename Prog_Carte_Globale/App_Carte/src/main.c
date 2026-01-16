@@ -9,7 +9,7 @@ int main(void)
         init_LTE();
         k_sleep(K_SECONDS(3));
 
-        //send_hit_info(0xABCDEF12); //example code  //to replace with decodedResult.value when hardware integration is done
+        int res = send_hit_info(0xABCDEF12); //example code  //to replace with decodedResult.value when hardware integration is done
         // fait crasher l'OS
 
         return 0;

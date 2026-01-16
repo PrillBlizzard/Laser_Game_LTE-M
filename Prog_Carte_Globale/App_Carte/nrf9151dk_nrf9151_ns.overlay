@@ -39,7 +39,7 @@
 
     emetteurs_IR {
         compatible = "pwm-leds";
-        
+
         emetteur_ir: emetteur_ir{
             
             pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
