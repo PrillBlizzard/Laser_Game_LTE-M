@@ -59,11 +59,14 @@ struct k_work_delayable decode_IR;
 
 irparams_t irParams = { .recvState = STATE_IDLE, .timer = 0, .rawlen = 0 };
 decoded_result_t decodedResult = { .value = 0, .bits = 0 };
+unsigned long lastDecodedValue = 0;
+bool isDataDecoded = false;
+
 
 // ----- OTHERS DEFINITIONS ----- //
 
 //init data to send
-unsigned long dataToSend = 0x00000000;
+unsigned long dataToSend = 0xAFAF1234;
 
 //init callback de l'interruption de la gachette
 static struct gpio_callback switch2_cb_data;
@@ -106,7 +109,7 @@ void emitIR_WorkHandler(struct k_work *work)
 {
 
     gpio_pin_toggle_dt(&led2);
-    dataToSend = 0xABCDEF12;
+    //dataToSend = 0xABCDEF12;
 
     while (gpio_pin_get_dt(&switch2) == 1)
     {
@@ -132,7 +135,9 @@ void decodeIR_WorkHandler(struct k_work *work){
     //decode the received data
     int res = decodeNEC(&irParams, &decodedResult);
     if( res== 0 ){
-        //LOG_DBG("Decoded Result: 0x%08X, bits: %d, res: %d \n", decodedResult.value, decodedResult.bits, res); 
+        LOG_DBG("Decoded Result: 0x%08X, bits: %d, res: %d \n", decodedResult.value, decodedResult.bits, res); 
+        isDataDecoded = true;
+        lastDecodedValue = decodedResult.value;
     } else {
         //LOG_ERR("Decoding failed with res: %d ", res);
         if(res == 2 ){
@@ -217,6 +222,23 @@ int init_capteursTir_module(void)
 
     LOG_DBG("Capteurs & Tir module initialized.");
     return 0;
+}
+
+// ----- OTHER FUNCTIONS ----- //
+
+void get_decoded_results_value(unsigned long* value)
+{
+    *value = lastDecodedValue;
+}
+
+void reset_decoded_results_status(void)
+{
+    isDataDecoded = false;
+}
+
+bool get_isDataDecoded(void)
+{
+    return isDataDecoded;
 }
 
 

@@ -3,7 +3,6 @@
 #define CAPTEURS_TIR_H
 
 
-
 // ----- NODE DEFINITION FROM DEVICTREE ----- //
 
 // Dk LED  for debugging emission and reception
@@ -44,8 +43,15 @@ void emitIR_WorkHandler(struct k_work *work);
 // workhandler that decode the raw IR signals regularly
 void decodeIR_WorkHandler(struct k_work *work);
 
+// ----- OTHER FUNCTIONS ----- //
+
+void get_decoded_results_value(unsigned long* value); // structure that holds the decoded IR data
 
 int init_capteursTir_module(void);
+
+bool get_isDataDecoded(void);
+
+void reset_decoded_results_status(void);
 
 #endif // CAPTEURS_TIR_H
 

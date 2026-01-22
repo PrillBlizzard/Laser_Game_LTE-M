@@ -174,3 +174,4 @@ int decodeNEC(irparams_t* irparams, decoded_result_t* result){
     return 0 ; // Success
 
 }
+

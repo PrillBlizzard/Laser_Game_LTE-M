@@ -201,7 +201,7 @@ int init_LTE(void)
     LOG_INF("LTE ready");
 }
 
-int send_hit_info(unsigned long decoded_data)
+int send_hit_info(unsigned long data_tosend)
 {
     // initialize variables
     struct sockaddr_in addr4;
@@ -228,15 +228,18 @@ int send_hit_info(unsigned long decoded_data)
     if (sock4 >= 0 && IS_ENABLED(CONFIG_NET_IPV4))
     {
         struct http_request req;
-        const char *decoded_data_str = (const char *)decoded_data;
+        char decoded_data_str[9]; // Buffer to hold the hex string representation of the data
+        sprintf( decoded_data_str, "%08lX", data_tosend); // Convert unsigned long to hex string
+
+        LOG_DBG("Sending HTTP POST request with data: %s", decoded_data_str);
         
         memset(&req, 0, sizeof(req));
 
         req.method = HTTP_POST;
         req.url = "/posty";
-        req.host = SERVER_ADDR4;
+        req.host = SERVER_ADDR4; 
         req.protocol = "HTTP/1.1";
-        req.payload = "Bonjour";
+        req.payload = decoded_data_str;
         req.payload_len = strlen(req.payload);
         req.response = response_cb;
         req.recv_buf = recv_buf_ipv4;

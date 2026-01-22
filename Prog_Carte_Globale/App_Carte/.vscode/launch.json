@@ -1,0 +1,12 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "nrf-connect",
+			"request": "launch",
+			"name": "Launch App_Carte/build_debug/App_Carte",
+			"config": "${workspaceFolder}/build_debug/App_Carte",
+			"runToEntryPoint": "main"
+		}
+	]
+}
