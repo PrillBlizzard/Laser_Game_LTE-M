@@ -199,6 +199,8 @@ int init_LTE(void)
     k_sem_take(&lte_connected, K_FOREVER);
 
     LOG_INF("LTE ready");
+
+    return 0;
 }
 
 int send_hit_info(unsigned long data_tosend)

@@ -9,10 +9,7 @@
 #include "capteurs_Tir.h"
 #include "../../Lib/NEC/NEC.h"
 
-
-
-
-//initialize logger
+// initialize logger
 LOG_MODULE_REGISTER(capteur_tir, LOG_LEVEL_DBG);
 
 // ----- GPIO and DEVICES DEFINITIONS FROM NODES ----- //
@@ -26,13 +23,13 @@ static const struct gpio_dt_spec led3 = GPIO_DT_SPEC_GET(LED3_NODE, gpios);
 static const struct gpio_dt_spec irecv = GPIO_DT_SPEC_GET(IR_REICV_NODE, gpios);
 
 // IR and LASER emitter nodes (respectively)
-static const struct pwm_dt_spec irmitterPWM_dt = PWM_DT_SPEC_GET(IR_EMIT_NODE); 
+static const struct pwm_dt_spec irmitterPWM_dt = PWM_DT_SPEC_GET(IR_EMIT_NODE);
 static const struct gpio_dt_spec lasmitter = GPIO_DT_SPEC_GET(LASER_EMIT_NODE, gpios);
 
-//Switch used as trigger for IR emission
+// Switch used as trigger for IR emission
 static const struct gpio_dt_spec switch2 = GPIO_DT_SPEC_GET(SW2_NODE, gpios);
 
-//GPIO used as trigger for IR emission
+// GPIO used as trigger for IR emission
 static const struct gpio_dt_spec pwmOut0 = GPIO_DT_SPEC_GET(PWM_NODE, gpios);
 
 // ----- DEFINITION OF WORKQUEUES AND STACK AREAS ----- //
@@ -57,24 +54,18 @@ struct k_work_delayable decode_IR;
 
 // ----- DEFINITION OF STRUCTURES FOR IR RECEPTION ----- //
 
-irparams_t irParams = { .recvState = STATE_IDLE, .timer = 0, .rawlen = 0 };
-decoded_result_t decodedResult = { .value = 0, .bits = 0 };
+irparams_t irParams = {.recvState = STATE_IDLE, .timer = 0, .rawlen = 0};
+decoded_result_t decodedResult = {.value = 0, .bits = 0};
 unsigned long lastDecodedValue = 0;
 bool isDataDecoded = false;
 
-
 // ----- OTHERS DEFINITIONS ----- //
 
-//init data to send
+// init data to send
 unsigned long dataToSend = 0xAFAF1234;
 
-//init callback de l'interruption de la gachette
+// init callback de l'interruption de la gachette
 static struct gpio_callback switch2_cb_data;
-
-
-
-
-
 
 // ----- GPIO INTERRUPT AND WORKHANDLER FOR IR EMISSION AND RECEPTION ----- //
 
@@ -90,17 +81,17 @@ void lR_IR_WorkHandler(struct k_work *work)
 {
     uint8_t rawSignal = gpio_pin_get_dt(&irecv);
 
-    //for debug with led
+    // for debug with led
     int val, val2;
     val = rawSignal;
-    gpio_pin_set_dt(&led1, val); 
-    val2 =  gpio_pin_get_dt(&pwmOut0);
+    gpio_pin_set_dt(&led1, val);
+    val2 = gpio_pin_get_dt(&pwmOut0);
     gpio_pin_set_dt(&led3, val2);
 
-    //call the listening routine
+    // call the listening routine
     lR_IR_Receive(&irParams, rawSignal);
 
-    //reschedule the workhandler
+    // reschedule the workhandler
     k_work_reschedule_for_queue(&reicv_work_q, &lR_IR_DelayableWork, K_USEC(TICK_LENGHT));
 }
 
@@ -109,7 +100,7 @@ void emitIR_WorkHandler(struct k_work *work)
 {
 
     gpio_pin_toggle_dt(&led2);
-    //dataToSend = 0xABCDEF12;
+    // dataToSend = 0xABCDEF12;
 
     while (gpio_pin_get_dt(&switch2) == 1)
     {
@@ -123,34 +114,35 @@ void emitIR_WorkHandler(struct k_work *work)
     }
 
     gpio_pin_toggle_dt(&led2);
-
-    // k_work_schedule_for_queue(&emit_work_q,&emitIR_DelayableWork, K_MSEC(500));
 }
 
 // workhandler that decode the raw IR signals regularly
-void decodeIR_WorkHandler(struct k_work *work){
-    
-    
+void decodeIR_WorkHandler(struct k_work *work)
+{
 
-    //decode the received data
+    // decode the received data
     int res = decodeNEC(&irParams, &decodedResult);
-    if( res== 0 ){
-        LOG_DBG("Decoded Result: 0x%08X, bits: %d, res: %d \n", decodedResult.value, decodedResult.bits, res); 
+    if (res == 0)
+    {
+        LOG_DBG("Decoded Result: 0x%08lX, bits: %d, res: %d \n", decodedResult.value, decodedResult.bits, res);
         isDataDecoded = true;
         lastDecodedValue = decodedResult.value;
-    } else {
-        //LOG_ERR("Decoding failed with res: %d ", res);
-        if(res == 2 ){
+    }
+    else
+    {
+        // LOG_ERR("Decoding failed with res: %d ", res);
+        if (res == 2)
+        {
             LOG_ERR("(Invalid bit detected)");
         }
-        if(res == 1 ){
-            //LOG_ERR("(Invalid start pulse)");
+        if (res == 1)
+        {
+            // LOG_ERR("(Invalid start pulse)");
         }
     }
 
-    //reschedule the workhandler
+    // reschedule the workhandler
     k_work_reschedule_for_queue(&decode_work_q, &decode_IR, K_MSEC(100));
-
 }
 
 // ----- DEFINITION OF IR EMISSION FUNCTIONS FROM NEC LIBRARY (TO ADAPT TO THE HARDWARE) ----- //
@@ -176,7 +168,7 @@ int init_capteursTir_module(void)
 {
     LOG_DBG("Initializing Capteurs & Tir module...");
 
-    //Initializing Worqueues...
+    // Initializing Worqueues...
     LOG_DBG("Initializing Worqueues...");
     k_work_queue_init(&reicv_work_q);
     k_work_queue_start(&reicv_work_q, reicv_stack_area, K_THREAD_STACK_SIZEOF(reicv_stack_area), 4, NULL);
@@ -187,10 +179,10 @@ int init_capteursTir_module(void)
     k_work_queue_init(&decode_work_q);
     k_work_queue_start(&decode_work_q, decode_stack_area, K_THREAD_STACK_SIZEOF(decode_stack_area), 6, NULL);
 
-    //Initializing GPIOs...
+    // Initializing GPIOs...
     LOG_DBG("Initializing GPIOs...");
-    
-    //DK LEDs for DEBUG mostly
+
+    // DK LEDs for DEBUG mostly
     gpio_pin_configure_dt(&led1, GPIO_OUTPUT_INACTIVE);
     gpio_pin_configure_dt(&led2, GPIO_OUTPUT_INACTIVE);
     gpio_pin_configure_dt(&led3, GPIO_OUTPUT_INACTIVE);
@@ -204,7 +196,7 @@ int init_capteursTir_module(void)
 
     gpio_pin_configure_dt(&switch2, GPIO_INPUT);
 
-    //Initializing Callbacks and Interrupts for Trigger...
+    // Initializing Callbacks and Interrupts for Trigger...
     LOG_DBG("Initializing Callbacks and Interrupts for Trigger...");
     gpio_pin_interrupt_configure_dt(&switch2, GPIO_INT_EDGE_TO_ACTIVE);
     gpio_init_callback(&switch2_cb_data, trigger_pulled, BIT(switch2.pin));
@@ -217,8 +209,8 @@ int init_capteursTir_module(void)
     k_work_init_delayable(&decode_IR, decodeIR_WorkHandler);
 
     LOG_DBG("Lauching receiver and decoder workhandlers...");
-    k_work_schedule_for_queue(&reicv_work_q,&lR_IR_DelayableWork, K_USEC(10));
-    k_work_schedule_for_queue(&decode_work_q,&decode_IR, K_MSEC(100));
+    k_work_schedule_for_queue(&reicv_work_q, &lR_IR_DelayableWork, K_USEC(10));
+    k_work_schedule_for_queue(&decode_work_q, &decode_IR, K_MSEC(100));
 
     LOG_DBG("Capteurs & Tir module initialized.");
     return 0;
@@ -226,7 +218,7 @@ int init_capteursTir_module(void)
 
 // ----- OTHER FUNCTIONS ----- //
 
-void get_decoded_results_value(unsigned long* value)
+void get_decoded_results_value(unsigned long *value)
 {
     *value = lastDecodedValue;
 }
@@ -240,6 +232,5 @@ bool get_isDataDecoded(void)
 {
     return isDataDecoded;
 }
-
 
 // ----- END OF FILE ----- //

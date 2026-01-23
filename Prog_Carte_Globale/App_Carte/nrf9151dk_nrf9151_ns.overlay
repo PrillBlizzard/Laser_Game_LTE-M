@@ -62,4 +62,28 @@
         status = "okay";
     };
 
+    led_RGB_4pins {
+        compatible = "gpio-leds";
+
+        led_r: led_R {
+            gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+            label = "LED Rouge";
+            status = "okay";
+        };
+
+        led_g: led_G {
+            gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
+            label = "LED Verte";
+            status = "okay";
+        };
+
+        led_b: led_B {
+            gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
+            label = "LED Bleue";
+            status = "okayje";
+        };
+
+        status = "okay";
+    };
+
 };
