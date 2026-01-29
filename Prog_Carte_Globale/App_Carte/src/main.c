@@ -1,5 +1,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/pwm.h>
 #include "capteurs_Tir.h"
 #include "LTE-M.h"
 
@@ -14,6 +17,7 @@ static const struct pwm_dt_spec led_RGB_G = PWM_DT_SPEC_GET(RGB_4P_G);
 static const struct pwm_dt_spec led_RGB_B = PWM_DT_SPEC_GET(RGB_4P_B);
 static const struct gpio_dt_spec test_LED = GPIO_DT_SPEC_GET(TEST_LED_NODE, gpios);
 
+
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 void lED_react(void)
@@ -24,6 +28,7 @@ void lED_react(void)
 
         gpio_pin_set_dt(&test_LED, 1);
 }       
+
 
 int main(void)
 {
@@ -39,6 +44,7 @@ int main(void)
         LOG_DBG("Starting main loop...");
 
         gpio_pin_set_dt(&test_LED, 1);
+
         unsigned long reicv_data_value;
 
         while (1)
@@ -51,12 +57,12 @@ int main(void)
                                 LOG_DBG("Decoded Result: %08lX \n", reicv_data_value);
                                 send_hit_info(reicv_data_value);
                                 reset_decoded_results_status();
-                                lED_react();
+                                 lED_react();
                         }
                         else{
                                 LOG_ERR("Error empty data received");
                         }
-                        
+
                 }
 
                 k_sleep(K_MSEC(100));
