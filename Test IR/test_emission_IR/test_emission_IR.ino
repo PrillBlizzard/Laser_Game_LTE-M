@@ -4,20 +4,29 @@
 
 
   IRsend irmitter;
-  unsigned int frame = 0xABCD;
+  unsigned int frame = 0xFF11;
 
 void setup() {
   Serial.begin(2000000);
-  Serial.println("Starting Emitting");
+
   pinMode(2,OUTPUT);
-  digitalWrite(2,HIGH);
+  pinMode(13,OUTPUT);
+  pinMode(8,OUTPUT);
 }
 
 void loop() {
 
-  irmitter.sendNEC(frame,32);  
-  delay(500);
+  if(digitalRead(8))
+  {
+
+    digitalWrite(13,HIGH);
+    irmitter.sendNEC(frame,32);  
+     delay(100);
+    digitalWrite(13,LOW);
+    delay(100);
     
-  Serial.println(frame, HEX);
-  Serial.println(digitalRead(3));
+  }
+
+  //Serial.println(frame, HEX);
+  //Serial.println(digitalRead(3));
 }
