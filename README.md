@@ -1,4 +1,4 @@
-# Laser_Game_NR-_Codium
+# Laser_Game_LTE-M
 Ce projet à été réalisé dans le cadre de mon projet de fin d'étude (PFE) de ma dernière année d'école d'ingénieur.
 
 ## Description
